@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Pathfinder 2E Playtest Stat Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <style>
+      td{
+        padding: 0px;
+      }
+
+      img.center-align{
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+      }
+    </style>
+  </head>
+
+  <body class="indigo lighten-4">
+    <header>
+      <img src="imgs/pathfinder_roleplaying_game.png" class="center-align">
+    </header>
+    <main>
+      <div class="row">
+        <div class="input-field col s4">
+          <span>Ancestry:</span>
+          <select id="select_ancestry">
+            <option value="" disabled selected></option>
+          </select>
+        </div>
+        <div class="input-field col s4">
+          <span>Background:</span>
+          <select id="select_background">
+            <option value="" disabled selected></option>
+          </select>
+        </div>
+        <div class="input-field col s4">
+          <span>Class:</span>
+          <select id="select_class">
+            <option value="" disabled selected></option>
+          </select>
+        </div>
+      </div>
+      <table>
+        <tbody id="tbody_abilityScores">
+          <thead>
+            <tr>
+              <th rowspan="2">Ability Score</th>
+              <th colspan="5">Boosts</th>
+              <th>Flaws</th>
+              <th rowspan="2">Total</th>
+            </tr>
+            <tr>
+              <th>Ancestry</th>
+              <th>Background 1</th>
+              <th>Background 2</th>
+              <th>Free</th>
+              <th>Class</th>
+              <th>Ancestry</th>
+            </tr>
+          </thead>
+        </tbody>
+      </table>
+    </main>
+    <footer class="page-footer center-align">
+        This website uses trademarks and/or copyrights owned by Paizo Inc., which are used under Paizo's Community Use Policy. We are expressly prohibited from charging you to use or access this content. This website is not published, endorsed, or specifically approved by Paizo Inc. For more information about Paizo's Community Use Policy, please visit paizo.com/communityuse. For more information about Paizo Inc. and Paizo products, please visit paizo.com.
+    </footer>
+  </body>
+
+</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<script>
+const abilityScores = [
+  'Strength',
+  'Dexterity',
+  'Constitution',
+  'Intelligence',
+  'Wisdom',
+  'Charisma'
+];
+
+const ancestries = {
+  Dwarf: {
+    boosts: ['con', 'wis'],
+    flaws: ['cha'],
+    numFreeBoosts: 1
+  },
+  Elf: {
+    boosts: ['dex', 'int'],
+    flaws: ['con'],
+    numFreeBoosts: 1
+  },
+  Gnome: {
+    boosts: ['con', 'cha'],
+    flaws: ['str'],
+    numFreeBoosts: 1
+  },
+  Goblin: {
+    boosts: ['dex', 'cha'],
+    flaws: ['wis'],
+    numFreeBoosts: 1
+  },
+  Halfling: {
+    boosts: ['dex', 'wis'],
+    flaws: ['str'],
+    numFreeBoosts: 1
+  },
+  Human: {
+    boosts: [],
+    flaws: [],
+    numFreeBoosts: 2
+  }
+};
+
+const backgrounds = {
+  'Acolyte': ['con', 'wis'],
+  'Acrobat': ['str', 'dex'],
+  'Animal Whisperer': ['wis', 'cha'],
+  'Barkeep': ['con', 'cha'],
+  'Blacksmith': ['str', 'int'],
+  'Criminal': ['dex', 'int'],
+  'Entertainer': ['dex', 'cha'],
+  'Farmhand': ['con', 'wis'],
+  'Gladiator': ['str', 'cha'],
+  'Hunter': ['dex', 'wis'],
+  'Laborer': ['str', 'con'],
+  'Merchant': ['int', 'cha'],
+  'Noble': ['int', 'cha'],
+  'Nomad': ['con', 'wis'],
+  'Sailor': ['str', 'dex'],
+  'Scholar': ['int', 'wis'],
+  'Scout': ['dex', 'wis'],
+  'Street Urchin': ['dex', 'int'],
+  'Warrior': ['str', 'con']
+};
+
+classes = {
+  'Alchemist': ['int'],
+  'Barbarian': ['str'],
+  'Bard': ['cha'],
+  'Cleric': ['wis'],
+  'Druid': ['wis'],
+  'Fighter': ['dex', 'str'],
+  'Monk': ['dex', 'str'],
+  'Paladin': ['str'],
+  'Ranger': ['dex', 'str'],
+  'Rogue': ['dex'],
+  'Sorcerer': ['cha'],
+  'Wizard': ['int']
+}
+
+const tbody_abilityScores = document.getElementById('tbody_abilityScores');
+
+function createAbilityScoreTable(){
+
+  for(let i=0;i<abilityScores.length;i++){
+    let scoreAbbr = abilityScores[i].substring(0,3).toLowerCase();
+
+    tbody_abilityScores.innerHTML +=
+      '<tr>'
+        +'<td>'+abilityScores[i]+':</td>'
+        +'<td><label><input id="input_ancestryBoost_'+scoreAbbr+'" value="'+scoreAbbr+'" class="ancestryBoost" type="checkbox" disabled><span></span></label></td>'
+        +'<td><label><input id="input_backgroundBoost1_'+scoreAbbr+'" value="'+scoreAbbr+'" class="backgroundBoost1" type="checkbox" disabled><span></span></label></td>'
+        +'<td><label><input id="input_backgroundBoost2_'+scoreAbbr+'" value="'+scoreAbbr+'" class="backgroundBoost2" type="checkbox" disabled><span></span></label></td>'
+        +'<td><label><input id="input_freeBoost_'+scoreAbbr+'" value="'+scoreAbbr+'" class="freeBoost" type="checkbox"><span></span></label></td>'
+        +'<td><label><input id="input_classBoost_'+scoreAbbr+'" value="'+scoreAbbr+'" class="classBoost" type="checkbox" disabled><span></span></label></td>'
+        +'<td><label><input id="input_ancestryFlaw_'+scoreAbbr+'" value="'+scoreAbbr+'" class="ancestryFlaw" type="checkbox" disabled><span></span></label></td>'
+        +'<td><input id="input_'+scoreAbbr+'" type="text" value=10 readonly disabled style="width:20px;"></td>'
+      +'</tr>';
+  }
+}
+
+const select_ancestry = document.getElementById('select_ancestry');
+
+function createAncestrySelector(){
+
+  Object.entries(ancestries).forEach(function([key, value]){
+    select_ancestry.innerHTML +=
+      '<option value="'+key+'">'
+        +key
+      +'</option>';
+  });
+}
+
+const select_background = document.getElementById('select_background');
+
+function createBackgroundSelector(){
+
+  Object.entries(backgrounds).forEach(function([key, value]){
+    select_background.innerHTML +=
+      '<option value="'+key+'">'
+        +key
+      +'</option>';
+  });
+}
+
+function changeStatTotal(id, amount){
+    document.getElementById(id).value = parseInt(document.getElementById(id).value)+amount;
+};
+
+numAncestryBoostsAvailable = 0;
+
+function onAncestryChange(event){
+  let selectedAncestry = ancestries[select_ancestry.value];
+
+  numAncestryBoostsAvailable = selectedAncestry['numFreeBoosts'];
+
+  let elements = document.getElementsByClassName('ancestryBoost');
+  let isDisabled = !(numAncestryBoostsAvailable > 0);
+  for(let i=0;i<elements.length;i++){
+    if(elements[i].checked == true)
+      changeStatTotal('input_'+elements[i].value, -2);
+    elements[i].checked = false;
+    elements[i].disabled = isDisabled;
+    elements[i].classList.remove('ancestrySet');
+  }
+
+  elements = document.getElementsByClassName('ancestryFlaw');
+  for(let i=0;i<elements.length;i++){
+    if(elements[i].checked == true)
+      changeStatTotal('input_'+elements[i].value, 2);
+    elements[i].checked = false;
+  }
+
+  for(let boost of selectedAncestry['boosts']){
+    let boostElement = document.getElementById('input_ancestryBoost_'+boost)
+    boostElement.checked = true;
+    boostElement.disabled = true;
+    changeStatTotal('input_'+boost, 2);
+    boostElement.classList.add('ancestrySet');
+  }
+
+  for(let flaw of selectedAncestry['flaws']){
+    let flawElement = document.getElementById('input_ancestryFlaw_'+flaw)
+    flawElement.checked = true;
+    flawElement.disabled = true;
+    changeStatTotal('input_'+flaw, -2);
+  }
+};
+
+function onAncestryBoostChange(event){
+  if(this.checked){
+    this.classList.add('playerSet');
+    changeStatTotal('input_'+this.value, 2);
+    numAncestryBoostsAvailable -= 1;
+
+    if(numAncestryBoostsAvailable == 0){
+      let elements = document.querySelectorAll('.ancestryBoost:not(.ancestrySet):not(.playerSet)');
+      for(element of elements){
+        element.disabled = true;
+      }
+    }
+  }
+  else{
+    this.classList.remove('playerSet');
+    changeStatTotal('input_'+this.value, -2);
+    numAncestryBoostsAvailable += 1;
+
+    if(numAncestryBoostsAvailable > 0){
+      let elements = document.querySelectorAll('.ancestryBoost:not(.ancestrySet):not(.playerSet)');
+      for(element of elements){
+        element.disabled = false;
+      }
+    }
+  }
+}
+
+function onAncestryFlawChange(event){
+  if(this.checked)
+    changeStatTotal('input_'+this.value, -2);
+  else
+    changeStatTotal('input_'+this.value, 2);
+}
+
+function onBackgroundChange(event){
+  let selectedBackground = backgrounds[select_background.value];
+
+  let elements = document.getElementsByClassName('backgroundBoost1');
+  for(let i=0;i<elements.length;i++){
+    if(elements[i].checked == true)
+      changeStatTotal('input_'+elements[i].value, -2);
+
+    elements[i].checked = false;
+    elements[i].disabled = true;
+    elements[i].classList.remove('backgroundOption');
+  }
+
+  for(let abilityChoice of selectedBackground){
+    let element = document.getElementById('input_backgroundBoost1_'+abilityChoice);
+    element.disabled = false;
+    element.classList.add('backgroundOption');
+  }
+
+  elements = document.getElementsByClassName('backgroundBoost2');
+  for(let i=0;i<elements.length;i++){
+    if(elements[i].checked == true)
+      changeStatTotal('input_'+elements[i].value, -2);
+
+    elements[i].checked = false;
+    elements[i].disabled = false;
+  }
+}
+
+function onBackgroundBoost1Change(event){
+  let otherOption = document.querySelector('.backgroundOption:not(#'+this.id+')');
+  let backgroundBoost2Option = document.getElementById('input_backgroundBoost2_'+this.value);
+  if(this.checked){
+    otherOption.disabled = true;
+    if(backgroundBoost2Option.checked){
+      backgroundBoost2Option.checked = false;
+      backgroundBoost2Option.dispatchEvent(new Event('change'));
+    }
+    changeStatTotal('input_'+this.value, 2);
+  }
+  else{
+    otherOption.disabled = false;
+    changeStatTotal('input_'+this.value, -2);
+  }
+}
+
+function onBackgroundBoost2Change(event){
+  let otherOptions = document.querySelectorAll('.backgroundBoost2:not(#'+this.id+')');
+  let backgroundBoost1Option = document.getElementById('input_backgroundBoost1_'+this.value);
+  if(this.checked){
+    for(let i=0;i<otherOptions.length;i++){
+        otherOptions[i].disabled = true;
+    }
+    if(backgroundBoost1Option.checked){
+      backgroundBoost1Option.checked = false;
+      backgroundBoost1Option.dispatchEvent(new Event('change'));
+    }
+    changeStatTotal('input_'+this.value, 2);
+  }
+  else{
+    for(let i=0;i<otherOptions.length;i++){
+        otherOptions[i].disabled = false;
+    }
+    changeStatTotal('input_'+this.value, -2);
+  }
+}
+
+let numFreeBoosts = 4;
+
+function onFreeBoostChange(event){
+  if(this.checked){
+    changeStatTotal('input_'+this.value, 2);
+    numFreeBoosts -= 1;
+
+    if(numFreeBoosts == 0){
+      let elements = document.querySelectorAll('.freeBoost:not(:checked)')
+      for(element of elements){
+        element.disabled=true;
+      }
+    }
+  }
+  else{
+    changeStatTotal('input_'+this.value, -2);
+    numFreeBoosts += 1;
+
+    if(numFreeBoosts > 0){
+      let elements = document.querySelectorAll('.freeBoost:not(:checked)')
+      for(element of elements){
+        element.disabled=false;
+      }
+    }
+  }
+};
+
+const select_class = document.getElementById('select_class');
+
+function createClassSelector(){
+
+  Object.entries(classes).forEach(function([key, value]){
+    select_class.innerHTML +=
+      '<option value="'+key+'">'
+        +key
+      +'</option>';
+  });
+};
+
+function onClassSelectChange(event){
+  let selectedClass = classes[select_class.value];
+
+  let elements = document.getElementsByClassName('classBoost');
+  for(let i=0;i<elements.length;i++){
+    if(elements[i].checked == true)
+      changeStatTotal('input_'+elements[i].value, -2);
+
+    elements[i].checked = false;
+    elements[i].disabled = true;
+    elements[i].classList.remove('classOption');
+  }
+
+  for(let abilityChoice of selectedClass){
+    let element = document.getElementById('input_classBoost_'+abilityChoice);
+    element.classList.add('classOption');
+    if(selectedClass.length == 1){
+      changeStatTotal('input_'+element.value, 2);
+      element.checked = true;
+    }
+    else{
+      element.disabled = false;
+    }
+  }
+};
+
+function onClassBoostChange(event){
+  if(this.checked){
+    changeStatTotal('input_'+this.value, 2);
+
+    let elements = document.querySelectorAll('.classOption:not(:checked)');
+    for(element of elements){
+      element.disabled = true;
+    }
+  }
+  else{
+    changeStatTotal('input_'+this.value, -2);
+    let elements = document.querySelectorAll('.classOption:not(:checked)');
+    for(element of elements){
+      element.disabled = false;
+    }
+  }
+}
+
+createAbilityScoreTable();
+createAncestrySelector();
+createBackgroundSelector();
+createClassSelector();
+select_ancestry.onchange = onAncestryChange;
+select_background.onchange = onBackgroundChange;
+select_class.onchange = onClassSelectChange;
+
+let ancestryBoostElements = document.getElementsByClassName('ancestryBoost');
+for(let i=0;i<ancestryBoostElements.length;i++){
+  ancestryBoostElements[i].onchange = onAncestryBoostChange;
+}
+let ancestryFlawElements = document.getElementsByClassName('ancestryFlaw');
+for(let i=0;i<ancestryFlawElements.length;i++){
+  ancestryFlawElements[i].onchange = onAncestryFlawChange;
+}
+
+let backgroundBoost1Elements = document.getElementsByClassName('backgroundBoost1');
+for(let i=0;i<backgroundBoost1Elements.length;i++){
+  backgroundBoost1Elements[i].onchange = onBackgroundBoost1Change;
+}
+let backgroundBoost2Elements = document.getElementsByClassName('backgroundBoost2');
+for(let i=0;i<backgroundBoost2Elements.length;i++){
+  backgroundBoost2Elements[i].onchange = onBackgroundBoost2Change;
+}
+let freeBoosts = document.getElementsByClassName('freeBoost');
+for(let i=0;i<freeBoosts.length;i++){
+  freeBoosts[i].onchange = onFreeBoostChange;
+}
+let classBoosts = document.getElementsByClassName('classBoost');
+for(let i=0;i<classBoosts.length;i++){
+  classBoosts[i].onchange = onClassBoostChange;
+}
+M.AutoInit();
+</script>

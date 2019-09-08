@@ -101,37 +101,44 @@ const ancestries = {
   Custom: {
     boosts: [],
     flaws: [],
-    numFreeBoosts: 6
+    numFreeBoosts: 6,
+    numFreeFlaws: 6
   },
   Dwarf: {
     boosts: ['con', 'wis'],
     flaws: ['cha'],
-    numFreeBoosts: 1
+    numFreeBoosts: 1,
+    numFreeFlaws: 0
   },
   Elf: {
     boosts: ['dex', 'int'],
     flaws: ['con'],
-    numFreeBoosts: 1
+    numFreeBoosts: 1,
+    numFreeFlaws: 0
   },
   Gnome: {
     boosts: ['con', 'cha'],
     flaws: ['str'],
-    numFreeBoosts: 1
+    numFreeBoosts: 1,
+    numFreeFlaws: 0
   },
   Goblin: {
     boosts: ['dex', 'cha'],
     flaws: ['wis'],
-    numFreeBoosts: 1
+    numFreeBoosts: 1,
+    numFreeFlaws: 0
   },
   Halfling: {
     boosts: ['dex', 'wis'],
     flaws: ['str'],
-    numFreeBoosts: 1
+    numFreeBoosts: 1,
+    numFreeFlaws: 0
   },
   Human: {
     boosts: [],
     flaws: [],
-    numFreeBoosts: 2
+    numFreeBoosts: 2,
+    numFreeFlaws: 0
   }
 };
 
@@ -238,11 +245,15 @@ function onAncestryChange(event){
     elements[i].classList.remove('ancestrySet');
   }
 
+  numAncestryFlawsAvailable = selectedAncestry['numFreeFlaws'];
+
   elements = document.getElementsByClassName('ancestryFlaw');
+  let isFlawDisabled = !(numAncestryFlawsAvailable > 0);
   for(let i=0;i<elements.length;i++){
     if(elements[i].checked == true)
       changeStatTotal('input_'+elements[i].value, 2);
     elements[i].checked = false;
+    elements[i].disabled = isFlawDisabled;
   }
 
   for(let boost of selectedAncestry['boosts']){

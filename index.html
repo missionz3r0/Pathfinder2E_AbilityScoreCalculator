@@ -131,6 +131,7 @@ const ancestries = {
 };
 
 const backgrounds = {
+  'Custom': ['str', 'dex', 'con', 'int', 'wis', 'cha'],
   'Acolyte': ['con', 'wis'],
   'Acrobat': ['str', 'dex'],
   'Animal Whisperer': ['wis', 'cha'],
@@ -324,10 +325,12 @@ function onBackgroundChange(event){
 }
 
 function onBackgroundBoost1Change(event){
-  let otherOption = document.querySelector('.backgroundOption:not(#'+this.id+')');
+  let otherOptions = document.querySelectorAll('.backgroundOption:not(#'+this.id+')');
   let backgroundBoost2Option = document.getElementById('input_backgroundBoost2_'+this.value);
   if(this.checked){
-    otherOption.disabled = true;
+    for(let otherOption of otherOptions){
+      otherOption.disabled = true;
+    }
     if(backgroundBoost2Option.checked){
       backgroundBoost2Option.checked = false;
       backgroundBoost2Option.dispatchEvent(new Event('change'));
@@ -335,7 +338,9 @@ function onBackgroundBoost1Change(event){
     changeStatTotal('input_'+this.value, 2);
   }
   else{
-    otherOption.disabled = false;
+    for(let otherOption of otherOptions){
+      otherOption.disabled = false;
+    }
     changeStatTotal('input_'+this.value, -2);
   }
 }

@@ -41,7 +41,6 @@
       .adSpace a{
         display:inline-block;
         height: 100%;
-        width: 12%;
       }
 
       .center a img{
@@ -163,11 +162,14 @@ async function init(){
   let adSpace = document.getElementById('adSpace');
   let ads = await loadJSON('/driveThruRPGAds.json');
 
-  let selectedAds = getRandom(ads, 8);
+  let numAds = 6;
+  let selectedAds = getRandom(ads, numAds);
+
+  width = 99/numAds;
 
   let html = '';
   for(let ad of selectedAds){
-    html = '<a href="https://www.drivethrurpg.com/product/'+ad.id+'">';
+    html = '<a href="https://www.drivethrurpg.com/product/'+ad.id+'" style="width='+width+'%">';
     html += '<img src="'+ad.imgSRC+'?affiliate_id=2232757">';
     html += '</a>';
     adSpace.innerHTML = adSpace.innerHTML+html;

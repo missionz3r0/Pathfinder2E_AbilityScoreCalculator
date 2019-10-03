@@ -58,6 +58,8 @@
         width: 50%;
       }
     </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   </head>
 
   <body class="indigo lighten-4">
@@ -71,46 +73,9 @@
     <main>
       <div class="row">
         <div class="col s1"></div>
-        <div class="col s5">
+        <div class="col s10">
           <div class="center">
-            <div class="adSpace">
-              <a target="_blank"  href="https://www.amazon.com/gp/product/1640781684/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1640781684&linkCode=as2&tag=madnesstablet-20&linkId=329a3ee893acef59b69367f023a06291">
-                <img border="0" src="//ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&MarketPlace=US&ASIN=1640781684&ServiceVersion=20070822&ID=AsinImage&WS=1&Format=_SL250_&tag=madnesstablet-20" >
-              </a>
-              <img src="//ir-na.amazon-adsystem.com/e/ir?t=madnesstablet-20&l=am2&o=1&a=1640781684" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
-
-              <a target="_blank"  href="https://www.amazon.com/gp/product/1640781749/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1640781749&linkCode=as2&tag=madnesstablet-20&linkId=befaa87fb22e32e416f4111478669ec3">
-                <img border="0" src="//ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&MarketPlace=US&ASIN=1640781749&ServiceVersion=20070822&ID=AsinImage&WS=1&Format=_SL250_&tag=madnesstablet-20" >
-              </a>
-              <img src="//ir-na.amazon-adsystem.com/e/ir?t=madnesstablet-20&l=am2&o=1&a=1640781749" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
-
-              <a target="_blank"  href="https://www.amazon.com/gp/product/1640781730/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1640781730&linkCode=as2&tag=madnesstablet-20&linkId=1b3aa184524f3715ebafec6deaeab526">
-                <img border="0" src="//ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&MarketPlace=US&ASIN=1640781730&ServiceVersion=20070822&ID=AsinImage&WS=1&Format=_SL250_&tag=madnesstablet-20" >
-              </a>
-              <img src="//ir-na.amazon-adsystem.com/e/ir?t=madnesstablet-20&l=am2&o=1&a=1640781730" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
-
-              <a target="_blank"  href="https://www.amazon.com/gp/product/1640781722/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1640781722&linkCode=as2&tag=madnesstablet-20&linkId=bdf9e2d0ed0596eb29cc6bbc6f656ce5">
-                <img border="0" src="//ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&MarketPlace=US&ASIN=1640781722&ServiceVersion=20070822&ID=AsinImage&WS=1&Format=_SL250_&tag=madnesstablet-20" >
-              </a>
-              <img src="//ir-na.amazon-adsystem.com/e/ir?t=madnesstablet-20&l=am2&o=1&a=1640781722" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
-            </div>
-          </div>
-        </div>
-        <div class="col s5">
-          <div class="center">
-            <div class="adSpace">
-              <a href="https://www.drivethrurpg.com/product/283714/Heaven--Hell-Aasimar--Tiefling-Ancestries?affiliate_id=2232757">
-                <img src="https://www.drivethrurpg.com/images/4628/283714.png">
-              </a>
-              <a href="https://www.drivethrurpg.com/product/288737/Second-Class-Guides-Wizard?affiliate_id=2232757">
-                <img src="https://www.drivethrurpg.com/images/3730/288737.jpg">
-              </a>
-              <a href="https://www.drivethrurpg.com/product/284552/Fellow-Travelers-Animal-Companions?affiliate_id=2232757">
-                <img src="https://www.drivethrurpg.com/images/3865/284552.jpg">
-              </a>
-              <a href="https://www.drivethrurpg.com/product/284580/Game-Changer-Alchemical-Tools?affiliate_id=2232757">
-                <img src="https://www.drivethrurpg.com/images/3865/284580.jpg">
-              </a>
+            <div id="adSpace" class="adSpace">
             </div>
           </div>
         </div>
@@ -163,9 +128,54 @@
   </body>
 
 </html>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
 <script>
+function loadJSON(fileName) {
+
+  return new Promise((resolve, reject) => {
+    var xobj = new XMLHttpRequest();
+    xobj.overrideMimeType("application/json");
+    xobj.open('GET', fileName, true);
+    xobj.onreadystatechange = function () {
+      if (xobj.readyState == 4 && xobj.status == "200") {
+        resolve(JSON.parse(xobj.responseText));
+      }
+    };
+    xobj.send(null);
+  });
+}
+
+function getRandom(arr, n) {
+    var result = new Array(n),
+        len = arr.length,
+        taken = new Array(len);
+    if (n > len)
+        throw new RangeError("getRandom: more elements taken than available");
+    while (n--) {
+        var x = Math.floor(Math.random() * len);
+        result[n] = arr[x in taken ? taken[x] : x];
+        taken[x] = --len in taken ? taken[len] : len;
+    }
+    return result;
+}
+
+async function init(){
+  let adSpace = document.getElementById('adSpace');
+  let ads = await loadJSON('/driveThruRPGAds.json');
+
+  let selectedAds = getRandom(ads, 8);
+
+  let html = '';
+  for(let ad of selectedAds){
+    html = '<a href="https://www.drivethrurpg.com/product/'+ad.id+'">';
+    html += '<img src="'+ad.imgSRC+'?affiliate_id=2232757">';
+    html += '</a>';
+    adSpace.innerHTML = adSpace.innerHTML+html;
+  }
+}
+
+init();
+
 const abilityScores = [
   'Strength',
   'Dexterity',

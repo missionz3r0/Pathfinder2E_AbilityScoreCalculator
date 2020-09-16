@@ -34,11 +34,11 @@
         max-width: 790px;
       }
 
-      .adSpace{
+      .k6P7$8QHd$Ue{
         width: 100%;
       }
 
-      .adSpace a{
+      .k6P7$8QHd$Ue a{
         display:inline-block;
         height: 100%;
       }
@@ -74,7 +74,7 @@
         <div class="col s1"></div>
         <div class="col s10">
           <div class="center">
-            <div id="adSpace" class="adSpace">
+            <div id="k6P7$8QHd$Ue" class="k6P7$8QHd$Ue">
 
             </div>
           </div>
@@ -161,7 +161,7 @@ function getRandom(arr, n) {
 
 
 async function init(){
-  let adSpace = document.getElementById('adSpace');
+  let k6P7$8QHd$Ue = document.getElementById('k6P7$8QHd$Ue');
   let ads = await loadJSON('/amazonAffiliateAds.json');
 
   let numAds = 6;
@@ -174,7 +174,7 @@ async function init(){
     html = '<a href="' + ad.url + '" style="width:'+width+'%;">';
     html += '<img src="'+ad.imgSRC+'" style="height:160px;">';
     html += '</a>';
-    adSpace.innerHTML = adSpace.innerHTML+html;
+    k6P7$8QHd$Ue.innerHTML = k6P7$8QHd$Ue.innerHTML+html;
   }
 }
 

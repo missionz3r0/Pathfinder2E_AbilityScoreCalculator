@@ -75,6 +75,7 @@
         <div class="col s10">
           <div class="center">
             <div id="adSpace" class="adSpace">
+
             </div>
           </div>
         </div>
@@ -158,9 +159,10 @@ function getRandom(arr, n) {
     return result;
 }
 
+
 async function init(){
   let adSpace = document.getElementById('adSpace');
-  let ads = await loadJSON('/driveThruRPGAds.json');
+  let ads = await loadJSON('/amazonAffiliateAds.json');
 
   let numAds = 6;
   let selectedAds = getRandom(ads, numAds);
@@ -169,14 +171,15 @@ async function init(){
 
   let html = '';
   for(let ad of selectedAds){
-    html = '<a href="https://www.drivethrurpg.com/product/'+ad.id+'?affiliate_id=2232757" style="width:'+width+'%;">';
-    html += '<img src="'+ad.imgSRC+'">';
+    html = '<a href="' + ad.url + '" style="width:'+width+'%;">';
+    html += '<img src="'+ad.imgSRC+'" style="height:160px;">';
     html += '</a>';
     adSpace.innerHTML = adSpace.innerHTML+html;
   }
 }
 
 init();
+
 
 const abilityScores = [
   'Strength',
